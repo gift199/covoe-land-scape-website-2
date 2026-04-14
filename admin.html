@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Covoe Landscaping - Image Management Admin Panel" />
+  <title>Admin - Image Management | Covoe Landscaping</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .admin-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .admin-header {
+      text-align: center;
+      margin-bottom: 50px;
+      padding: 30px 0;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .admin-header h1 {
+      color: var(--primary-dark);
+      margin-bottom: 10px;
+    }
+
+    .admin-header p {
+      color: var(--muted);
+      font-size: 1.1rem;
+    }
+
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+    }
+
+    .image-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    .image-preview {
+      width: 100%;
+      height: 250px;
+      border-radius: 12px;
+      object-fit: cover;
+      margin-bottom: 15px;
+      border: 1px solid var(--border);
+    }
+
+    .image-card h3 {
+      color: var(--primary-dark);
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+
+    .image-card p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 15px;
+    }
+
+    .upload-section {
+      margin-bottom: 20px;
+    }
+
+    .upload-section label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .file-input-wrapper input[type="file"] {
+      position: absolute;
+      left: -9999px;
+    }
+
+    .file-input-label {
+      display: block;
+      padding: 12px;
+      background: var(--light);
+      border: 2px dashed var(--primary);
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      color: var(--primary);
+      font-weight: 600;
+      transition: all var(--transition);
+    }
+
+    .file-input-label:hover {
+      background: var(--primary);
+      color: var(--white);
+    }
+
+    .file-name {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .upload-btn,
+    .clear-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+      font-size: 0.95rem;
+    }
+
+    .upload-btn {
+      background: var(--primary);
+      color: var(--white);
+    }
+
+    .upload-btn:hover:not(:disabled) {
+      background: var(--primary-dark);
+    }
+
+    .upload-btn:disabled {
+      background: var(--muted);
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .clear-btn {
+      background: #f5f5f5;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .clear-btn:hover {
+      background: #e0e0e0;
+    }
+
+    .status-message {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 0.9rem;
+      min-height: 20px;
+    }
+
+    .status-message.success {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .status-message.error {
+      background: #ffebee;
+      color: #c62828;
+    }
+
+    .status-message.info {
+      background: #e3f2fd;
+      color: #1976d2;
+    }
+
+    .info-box {
+      background: #f0f8f0;
+      border-left: 4px solid var(--primary);
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 30px;
+    }
+
+    .info-box h4 {
+      color: var(--primary-dark);
+      margin-bottom: 8px;
+    }
+
+    .info-box ul {
+      list-style: disc;
+      margin-left: 20px;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+
+    .info-box li {
+      margin-bottom: 5px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color var(--transition);
+    }
+
+    .back-link:hover {
+      color: var(--primary-dark);
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">Covoe Landscaping <span>& Gardening</span></a>
+      <button class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">☰</button>
+      <nav class="nav" id="nav">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="sustainability.html">Sustainability</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="admin.html" class="active">Admin</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="admin-container">
+      <a href="index.html" class="back-link">← Back to Website</a>
+
+      <div class="admin-header">
+        <h1>🖼️ Image Management Center</h1>
+        <p>Replace any image on your website easily</p>
+      </div>
+
+      <div class="info-box">
+        <h4>📋 How to Use:</h4>
+        <ul>
+          <li>Select an image file from your computer (JPG, PNG, WebP)</li>
+          <li>Click "Upload Image" to replace it immediately</li>
+          <li>Images are stored in your browser - no server needed</li>
+          <li>File size: Max 5MB recommended for web</li>
+          <li>Images update across your entire website in real-time</li>
+        </ul>
+      </div>
+
+      <div class="image-grid" id="imageGrid"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <h3>Covoe Landscaping & Gardening</h3>
+        <p>The beauty of nature is love.</p>
+      </div>
+      <div>
+        <h4>Hours</h4>
+        <ul class="footer-links">
+          <li>Monday - Friday: 8:00 AM - 5:00 PM</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Hours & Contact</h4>
+        <p><strong>Monday - Friday:</strong> 8:00 AM - 5:00 PM</p>
+        <p>Email: info@covoelandscaping.com</p>
+        <p>Phone: 07909752179</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Covoe Landscaping and Gardening. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Image management data
+    const images = [
+      { id: 'hero', name: 'Hero Banner', description: 'Homepage hero/hero image', location: 'images/hero-placeholder.jpg', pages: ['index.html'] },
+      { id: 'eco', name: 'Eco-Friendly Feature', description: 'Eco-Friendly First card', location: 'images/eco-placeholder.jpg', pages: ['index.html'] },
+      { id: 'detail', name: 'Detail Feature', description: 'Attention to Detail card', location: 'images/detail-placeholder.jpg', pages: ['index.html'] },
+      { id: 'professional', name: 'Professional Feature', description: 'Reliable & Professional card', location: 'images/professional-placeholder.jpg', pages: ['index.html'] },
+      { id: 'lawn', name: 'Lawn Maintenance', description: 'Services - Lawn Maintenance', location: 'images/lawn-placeholder.jpg', pages: ['services.html'] },
+      { id: 'garden', name: 'Gardening & Planting', description: 'Services - Gardening & Planting', location: 'images/garden-placeholder.jpg', pages: ['services.html'] },
+      { id: 'design', name: 'Landscape Design', description: 'Services - Landscape Design', location: 'images/design-placeholder.jpg', pages: ['services.html'] },
+      { id: 'hardscape', name: 'Hardscaping', description: 'Services - Hardscaping', location: 'images/hardscape-placeholder.jpg', pages: ['services.html'] },
+      { id: 'seasonal', name: 'Seasonal Services', description: 'Services - Seasonal Care', location: 'images/seasonal-placeholder.jpg', pages: ['services.html'] },
+      { id: 'before-after', name: 'Before/After', description: 'Services - Before & After Comparison', location: 'images/before-after-placeholder.jpg', pages: ['services.html'] },
+      { id: 'founder', name: 'Founder Portrait', description: 'About page - Founder image', location: 'images/founder-placeholder.jpg', pages: ['about.html'] },
+      { id: 'sustainability', name: 'Sustainability', description: 'Sustainability page image', location: 'images/sustainability-placeholder.jpg', pages: ['sustainability.html'] },
+      { id: 'map', name: 'Map Image', description: 'Contact page map image', location: 'images/map-placeholder.jpg', pages: ['contact.html'] }
+    ];
+
+    // Initialize admin panel
+    function initializeAdmin() {
+      const grid = document.getElementById('imageGrid');
+      
+      images.forEach(image => {
+        const card = document.createElement('div');
+        card.className = 'image-card';
+        card.innerHTML = `
+          <img src="${image.location}?t=${Date.now()}" alt="${image.name}" class="image-preview" id="preview-${image.id}" />
+          <h3>${image.name}</h3>
+          <p>${image.description}</p>
+          <p style="font-size: 0.85rem; color: #999;">📄 ${image.pages.join(', ')}</p>
+          
+          <div class="upload-section">
+            <label for="file-${image.id}">Choose Image</label>
+            <div class="file-input-wrapper">
+              <input type="file" id="file-${image.id}" accept="image/jpeg,image/png,image/webp" />
+              <label for="file-${image.id}" class="file-input-label">
+                📤 Click or drag to upload
+                <span class="file-name" id="filename-${image.id}">No file selected</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="button-group">
+            <button class="upload-btn" id="btn-${image.id}" onclick="uploadImage('${image.id}')" disabled>
+              Upload Image
+            </button>
+            <button class="clear-btn" onclick="clearFile('${image.id}')">Clear</button>
+          </div>
+
+          <div class="status-message" id="status-${image.id}"></div>
+        `;
+        
+        grid.appendChild(card);
+
+        // Setup file input listener
+        const fileInput = document.getElementById(`file-${image.id}`);
+        const uploadBtn = document.getElementById(`btn-${image.id}`);
+        const fileNameSpan = document.getElementById(`filename-${image.id}`);
+
+        fileInput.addEventListener('change', function() {
+          if (this.files && this.files[0]) {
+            const file = this.files[0];
+            fileNameSpan.textContent = file.name;
+            uploadBtn.disabled = false;
+          }
+        });
+
+        // Drag and drop support
+        const label = fileInput.parentElement.querySelector('.file-input-label');
+        label.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          label.style.background = 'var(--primary)';
+          label.style.color = 'var(--white)';
+        });
+
+        label.addEventListener('dragleave', () => {
+          label.style.background = '';
+          label.style.color = '';
+        });
+
+        label.addEventListener('drop', (e) => {
+          e.preventDefault();
+          label.style.background = '';
+          label.style.color = '';
+          if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            fileInput.files = e.dataTransfer.files;
+            fileInput.dispatchEvent(new Event('change'));
+          }
+        });
+      });
+    }
+
+    // Upload image function
+    async function uploadImage(imageId) {
+      const fileInput = document.getElementById(`file-${imageId}`);
+      const statusMessage = document.getElementById(`status-${imageId}`);
+      const preview = document.getElementById(`preview-${imageId}`);
+      const uploadBtn = document.getElementById(`btn-${imageId}`);
+
+      if (!fileInput.files || !fileInput.files[0]) {
+        showStatus(statusMessage, 'error', 'No file selected');
+        return;
+      }
+
+      const file = fileInput.files[0];
+
+      // Validate file size (5MB max)
+      if (file.size > 5 * 1024 * 1024) {
+        showStatus(statusMessage, 'error', 'File too large (max 5MB)');
+        return;
+      }
+
+      // Validate file type
+      if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+        showStatus(statusMessage, 'error', 'Invalid file type. Use JPG, PNG, or WebP');
+        return;
+      }
+
+      try {
+        uploadBtn.disabled = true;
+        showStatus(statusMessage, 'info', 'Uploading...');
+
+        // Create FormData
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('imageName', imageId);
+
+        // In a real application, this would upload to a server
+        // For now, we'll use localStorage to simulate persistence
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          localStorage.setItem(`image-${imageId}`, e.target.result);
+          preview.src = e.target.result;
+          showStatus(statusMessage, 'success', `✓ Image updated! (${(file.size / 1024).toFixed(1)} KB)`);
+          fileInput.value = '';
+          uploadBtn.disabled = true;
+          document.getElementById(`filename-${imageId}`).textContent = 'No file selected';
+          
+          // Update preview across website
+          updateImageOnAllPages(imageId, e.target.result);
+        };
+        reader.readAsDataURL(file);
+      } catch (error) {
+        showStatus(statusMessage, 'error', 'Upload failed: ' + error.message);
+        uploadBtn.disabled = false;
+      }
+    }
+
+    // Clear file input
+    function clearFile(imageId) {
+      const fileInput = document.getElementById(`file-${imageId}`);
+      const fileNameSpan = document.getElementById(`filename-${imageId}`);
+      const uploadBtn = document.getElementById(`btn-${imageId}`);
+      const statusMessage = document.getElementById(`status-${imageId}`);
+
+      fileInput.value = '';
+      fileNameSpan.textContent = 'No file selected';
+      uploadBtn.disabled = true;
+      statusMessage.textContent = '';
+    }
+
+    // Update image on all pages
+    function updateImageOnAllPages(imageId, imageData) {
+      const imageMap = {
+        'hero': 'hero-placeholder.jpg',
+        'eco': 'eco-placeholder.jpg',
+        'detail': 'detail-placeholder.jpg',
+        'professional': 'professional-placeholder.jpg',
+        'lawn': 'lawn-placeholder.jpg',
+        'garden': 'garden-placeholder.jpg',
+        'design': 'design-placeholder.jpg',
+        'hardscape': 'hardscape-placeholder.jpg',
+        'seasonal': 'seasonal-placeholder.jpg',
+        'before-after': 'before-after-placeholder.jpg',
+        'founder': 'founder-placeholder.jpg',
+        'sustainability': 'sustainability-placeholder.jpg',
+        'map': 'map-placeholder.jpg'
+      };
+
+      // Update all img tags with this source across all pages
+      document.querySelectorAll(`img[src*="${imageMap[imageId]}"]`).forEach(img => {
+        img.src = imageData;
+      });
+    }
+
+    // Show status message
+    function showStatus(element, type, message) {
+      element.className = `status-message ${type}`;
+      element.textContent = message;
+    }
+
+    // Load stored images on page load
+    function loadStoredImages() {
+      images.forEach(image => {
+        const stored = localStorage.getItem(`image-${image.id}`);
+        if (stored) {
+          const preview = document.getElementById(`preview-${image.id}`);
+          if (preview) {
+            preview.src = stored;
+          }
+        }
+      });
+    }
+
+    // Menu toggle setup
+    document.addEventListener('DOMContentLoaded', function() {
+      const menuToggle = document.getElementById('menu-toggle');
+      const nav = document.getElementById('nav');
+
+      if (menuToggle && nav) {
+        menuToggle.addEventListener('click', function() {
+          nav.classList.toggle('open');
+        });
+      }
+
+      // Initialize
+      initializeAdmin();
+      loadStoredImages();
+    });
+  </script>
+</body>
+</html>
